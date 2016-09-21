@@ -19,3 +19,4 @@ _build
 *.cert*
 *.key*
 downloaded-data/*
+env/*
