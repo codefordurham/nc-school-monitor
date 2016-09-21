@@ -1,5 +1,9 @@
 CACHE_DIR = ./downloaded-data
-#ROOT_DIR = 
+
+get_data:
+	make get_disag_data
+	make get_acct_summ_data
+	make get_title_I_data
 
 get_disag_data:
 	# NC DPI School Accountability disaggregated data
