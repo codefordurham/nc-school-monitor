@@ -18,3 +18,12 @@ get_acct_summ_data:
 	wget -N http://www.dpi.state.nc.us/docs/accountability/reporting/acctsumm15.xlsx; \
 	wget -N http://www.dpi.state.nc.us/docs/accountability/reporting/acctsumm14.xlsx; \
 
+get_title_I_data:
+	# NC DPI Title I schools
+	mkdir -p $(CACHE_DIR)/ncdpi/titleI
+	cd $(CACHE_DIR)/ncdpi/titleI; \
+	wget -N http://www.dpi.state.nc.us/docs/program-monitoring/titleIA/2015-16.xls; \
+	wget -N http://www.dpi.state.nc.us/docs/program-monitoring/titleIA/2014-15.xlsx; \
+	wget -N http://www.dpi.state.nc.us/docs/program-monitoring/titleIA/2013-14.xls; \
+
+
