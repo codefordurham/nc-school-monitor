@@ -30,4 +30,11 @@ get_title_I_data:
 	wget -N http://www.dpi.state.nc.us/docs/program-monitoring/titleIA/2014-15.xlsx; \
 	wget -N http://www.dpi.state.nc.us/docs/program-monitoring/titleIA/2013-14.xls; \
 
+clean_title_I_data:
+	mkdir -p ./cleaned/2015-16
+	mkdir -p ./cleaned/2014-15
+	mkdir -p ./cleaned/2013-14
 
+	in2csv downloaded-data/ncdpi/titleI/2015-16.xls | python scripts/normalize-header.py > ./cleaned/2015-16/titleI.csv
+	in2csv downloaded-data/ncdpi/titleI/2014-15.xlsx | python scripts/normalize-header.py > ./cleaned/2014-15/titleI.csv
+	in2csv downloaded-data/ncdpi/titleI/2013-14.xls | python scripts/normalize-header.py > ./cleaned/2013-14/titleI.csv

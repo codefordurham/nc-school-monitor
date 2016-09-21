@@ -19,4 +19,5 @@ _build
 *.cert*
 *.key*
 downloaded-data/*
+cleaned/*
 env/*
