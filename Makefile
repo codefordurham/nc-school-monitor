@@ -5,6 +5,10 @@ get_data:
 	make get_acct_summ_data
 	make get_title_I_data
 
+clean_data:
+	make clean_title_I_data
+	make clean_eddie_data
+
 get_disag_data:
 	# NC DPI School Accountability disaggregated data
 	mkdir -p $(CACHE_DIR)/ncdpi/disag
@@ -30,7 +34,7 @@ get_title_I_data:
 	wget -N http://www.dpi.state.nc.us/docs/program-monitoring/titleIA/2014-15.xlsx; \
 	wget -N http://www.dpi.state.nc.us/docs/program-monitoring/titleIA/2013-14.xls; \
 
-COLS="school_year,school_code,school_name,total_resident_children,number_low_income_students,percent_low_income_students,served_1st_year"
+COLS="school_year,lea_code,school_code,school_name,total_resident_children,number_low_income_students,percent_low_income_students,served_1st_year"
 clean_title_I_data:
 	mkdir -p ./cleaned/2015-16
 	mkdir -p ./cleaned/2014-15
@@ -48,16 +52,16 @@ clean_title_I_data:
 	csvstack ./cleaned/2015-16/titleI_ss.csv ./cleaned/2014-15/titleI_ss.csv ./cleaned/2013-14/titleI_ss.csv \
 		| python ./scripts/clean_titleI.py > ./cleaned/titleI.csv
 
-COLS="school_year,lea_code,school_type,school_code,school_name,official_school_name,address_line1,address_line2,city,state,zip_code_5,opening_effective_date,grade_level_current,school_type_description,school_program_type_description,school_calendar_description"
+COLS_2="school_year,lea_code,school_type,school_code,school_name,official_school_name,address_line1,address_line2,city,state,zip_code_5,opening_effective_date,grade_level_current,school_type_description,school_program_type_description,school_calendar_description"
 clean_eddie_data:
 	for year in 2015-16 2014-15 2013-14; do \
 		mkdir -p ./cleaned/$$year; \
 		csvcut -e latin1 downloaded-data/eddie/$$year/active_lea_school_district_schools_report.csv \
 			| python scripts/clean_eddie.py $$year school_district \
-			| csvcut -c $(COLS) > cleaned/$$year/eddie_school_district.csv; \
+			| csvcut -c $(COLS_2) > cleaned/$$year/eddie_school_district.csv; \
 		csvcut -e latin1 downloaded-data/eddie/$$year/active_charter_schools_report.csv \
 			| python scripts/clean_eddie.py $$year charter \
-			| csvcut -c $(COLS) > cleaned/$$year/eddie_charter.csv; \
+			| csvcut -c $(COLS_2) > cleaned/$$year/eddie_charter.csv; \
 	done
 
 	csvstack cleaned/*/eddie_*csv > cleaned/schools.csv
