@@ -50,18 +50,15 @@ clean_title_I_data:
 
 COLS="school_year,lea_code,school_type,school_code,school_name,official_school_name,address_line1,address_line2,city,state,zip_code_5,opening_effective_date,grade_level_current,school_type_description,school_program_type_description,school_calendar_description"
 clean_eddie_data:
-	mkdir -p ./cleaned/2015-16
-	mkdir -p ./cleaned/2014-15
-	mkdir -p ./cleaned/2013-14
+	for year in 2015-16 2014-15 2013-14; do \
+		mkdir -p ./cleaned/$$year; \
+		csvcut -e latin1 downloaded-data/eddie/$$year/active_lea_school_district_schools_report.csv \
+			| python scripts/clean_eddie.py $$year school_district \
+			| csvcut -c $(COLS) > cleaned/$$year/eddie_school_district.csv; \
+		csvcut -e latin1 downloaded-data/eddie/$$year/active_charter_schools_report.csv \
+			| python scripts/clean_eddie.py $$year charter \
+			| csvcut -c $(COLS) > cleaned/$$year/eddie_charter.csv; \
+	done
 
-	csvcut -e latin1 downloaded-data/eddie/2015-16/active_lea_school_district_schools_report.csv \
-		| python scripts/clean_eddie.py 2015-16 school_district \
-		| csvcut -c $(COLS) > cleaned/2015-16/eddie_school_district.csv
-	csvcut -e latin1 downloaded-data/eddie/2015-16/active_charter_schools_report.csv \
-		| python scripts/clean_eddie.py 2015-16 charter \
-		| csvcut -c $(COLS) > cleaned/2015-16/eddie_charter.csv
-	csvcut -e latin1 downloaded-data/eddie/2015-16/active_regional_schools_report.csv \
-		| python scripts/clean_eddie.py 2015-16 regional \
-		| csvcut -c $(COLS) > cleaned/2015-16/eddie_regional.csv
+	csvstack cleaned/*/eddie_*csv > cleaned/schools.csv
 
-	
