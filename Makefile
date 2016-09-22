@@ -30,7 +30,7 @@ get_title_I_data:
 	wget -N http://www.dpi.state.nc.us/docs/program-monitoring/titleIA/2014-15.xlsx; \
 	wget -N http://www.dpi.state.nc.us/docs/program-monitoring/titleIA/2013-14.xls; \
 
-COLS="school_year,school_code,school_name,total_resident_children,number_low_income_students,percent_low_income_students,served_1st_year"
+COLS="school_year,lea_code,school_code,school_name,total_resident_children,number_low_income_students,percent_low_income_students,served_1st_year"
 clean_title_I_data:
 	mkdir -p ./cleaned/2015-16
 	mkdir -p ./cleaned/2014-15
@@ -45,4 +45,5 @@ clean_title_I_data:
 	csvcut -c $(COLS) ./cleaned/2014-15/titleI.csv > ./cleaned/2014-15/titleI_ss.csv
 	csvcut -c $(COLS) ./cleaned/2013-14/titleI.csv > ./cleaned/2013-14/titleI_ss.csv
 
-	csvstack ./cleaned/2015-16/titleI_ss.csv ./cleaned/2014-15/titleI_ss.csv ./cleaned/2013-14/titleI_ss.csv > ./cleaned/titleI.csv
+	csvstack ./cleaned/2015-16/titleI_ss.csv ./cleaned/2014-15/titleI_ss.csv ./cleaned/2013-14/titleI_ss.csv \
+		| python ./scripts/clean_titleI.py > ./cleaned/titleI.csv
