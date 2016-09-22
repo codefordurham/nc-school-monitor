@@ -19,7 +19,7 @@ def fix_code_charter(x):
     'fix school_code when school is a charter based on lea code and the school_code is not padded with zeros.'
     if x.lea_code[-1] in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' and len(x.school_code) != 6:
         return x.lea_code + '000'
-    return x.lea_code    
+    return x.school_code
 
 if __name__ == '__main__':
     import sys
