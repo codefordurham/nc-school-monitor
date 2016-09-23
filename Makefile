@@ -66,3 +66,12 @@ clean_eddie_data:
 
 	csvstack cleaned/*/eddie_*csv > cleaned/schools.csv
 
+clean_acctsumm:
+	python scripts/clean_acctsumm.py downloaded-data/ncdpi/acctsumm/acctsumm16.xlsx 6 \
+		> cleaned/2015-16/acctsumm.csv
+	python scripts/clean_acctsumm.py downloaded-data/ncdpi/acctsumm/acctsumm15.xlsx 6 \
+		> cleaned/2014-15/acctsumm.csv
+	python scripts/clean_acctsumm.py downloaded-data/ncdpi/acctsumm/acctsumm14.xlsx 4 \
+		> cleaned/2013-14/acctsumm.csv
+
+	python scripts/stack_acctsumm.py > cleaned/acctsumm.csv
