@@ -76,3 +76,15 @@ clean_acctsumm:
 		> cleaned/2013-14/acctsumm.csv
 
 	python scripts/stack_acctsumm.py > cleaned/acctsumm.csv
+
+clean_disag:
+	cd downloaded-data/ncdpi/disag/; \
+	unzip -jo disag1516.zip; \
+	unzip -jo disag1415.zip; \
+	unzip -jo disag1314.zip; \
+
+	python scripts/merge_disag.py downloaded-data/ncdpi/disag/ cleaned/disag.db
+
+remove_disag_files:
+	cd downloaded-data/ncdpi/disag/; \
+	rm *.txt *.doc
