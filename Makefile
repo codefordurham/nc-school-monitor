@@ -8,6 +8,7 @@ get_data:
 clean_data:
 	make clean_title_I_data
 	make clean_eddie_data
+	make clean_acctsumm
 
 get_disag_data:
 	# NC DPI School Accountability disaggregated data
