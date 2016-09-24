@@ -1,3 +1,16 @@
-h3 {
-	color: green;
+body {
+	font-family: 'Roboto', sans-serif;
+}
+
+.nav h1 {
+  display: inline;
+  position: relative;
+  top: 14px;
+  left: 5px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+h1 {
+	font-size: 20px;	
 }
