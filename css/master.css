@@ -2,6 +2,10 @@ body {
 	font-family: 'Roboto', sans-serif;
 }
 
+.nav {
+	font-size: 18px;
+}
+
 .nav h1 {
   display: inline;
   position: relative;
@@ -11,6 +15,28 @@ body {
   font-weight: 500;
 }
 
+.navbar {
+	margin-bottom: 0;
+}
+
 h1 {
-	font-size: 20px;	
+	font-size: 25px;	
+}
+
+.my-fluid-container {
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.jumbotron#hero {
+	height: 500px;
+	color: #FFF;
+	opacity: 0.25;
+	background-image: url(https://durhamschoolnavigator.org/media/school_photos/R._N._harris_Integrated_Arts_Core_Knowledge_Magnet_School.jpg);
+}
+
+.jumbotron h1 {
+	text-align: center;
 }
