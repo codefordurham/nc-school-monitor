@@ -78,6 +78,8 @@ clean_acctsumm:
 	python scripts/stack_acctsumm.py > cleaned/acctsumm.csv
 
 clean_disag:
+	mkdir -p ./cleaned/
+
 	cd downloaded-data/ncdpi/disag/; \
 	unzip -jo disag1516.zip; \
 	unzip -jo disag1415.zip; \
