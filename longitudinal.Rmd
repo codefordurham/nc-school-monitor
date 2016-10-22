@@ -1,0 +1,68 @@
+---
+title: Longitudinal(ish) model
+---
+
+```{r}
+library(dplyr)
+library(RSQLite)
+library(ggplot2)
+library(dplyr)
+```
+
+```{r cache=TRUE}
+con <- dbConnect(drv = SQLite(), dbname = "./cleaned/disag.db")
+dbListTables(con)
+dfDisag <- dbGetQuery(con, "SELECT * FROM disag")
+```
+
+```{r cache=TRUE}
+dfDisag <- dfDisag %>% 
+  mutate(num_glp = as.numeric(num_glp)
+         , pct_glp = num_glp / num_tested
+         , SchoolYearInt = as.integer(substr(school_year, 1, 4)))
+```
+
+```{r}
+dfLongAll <- dfDisag %>%
+  filter(subgroup == "ALL"
+         , type == "ALL"
+         , subject == "ALL"
+         , grade == 'ALL') %>% 
+  select(school_code, school_year, grade_span, pct_glp) %>% 
+  arrange(school_code, grade_span, school_year)
+```
+
+```{r}
+dfVarianceAll <- dfLongAll %>% 
+  filter(!is.na(pct_glp)) %>% 
+  group_by(school_year) %>% 
+  summarise(N = n()
+            , Mean = mean(pct_glp)
+            , Variance = var(pct_glp)) %>% 
+  mutate(StdDev = sqrt(Variance))
+```
+
+```{r}
+dfLongGrade <- dfDisag %>% 
+  filter(subgroup == "ALL"
+         , type == "ALL"
+         , grade %in% c('03', '04', '05')
+         , subject == "EOG") %>% 
+  select(school_code, SchoolYearInt, grade, pct_glp) %>% 
+  mutate(grade = as.integer(grade)
+         , OriginYear = SchoolYearInt - (grade - 3)) %>% 
+  arrange(school_code, OriginYear, grade) %>% 
+  group_by(school_code, OriginYear) %>% 
+  mutate(glp_diff = pct_glp - dplyr::lag(pct_glp)) %>% 
+  filter(!is.na(glp_diff))
+```
+
+```{r}
+dfVarianceGrade <- dfLongGrade %>% 
+  group_by(SchoolYearInt) %>% 
+  summarise(N = n()
+            , Mean = mean(glp_diff)
+            , Variance = var(glp_diff)) %>% 
+  mutate(StdDev = sqrt(Variance))
+```
+
