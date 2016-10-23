@@ -1,0 +1,25 @@
+---
+output:
+  beamer_presentation
+---
+
+# Public data on public schools
+
+- Each year NCDPI makes 1.5 million rows of student achievement data available as open data. 
+- With such an immense set of information, it should be easy to assess school performance
+- But is it?
+
+# How does a parent assess school performance?
+
+
+# One source for data
+
+- We take various data sources and aggregate them
+
+# How do you use open data?
+
+- Much data is publicly available, but comes from various public sources
+
+# What is your business plan to scale your project?
+
+- 

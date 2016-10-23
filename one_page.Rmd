@@ -1,0 +1,32 @@
+---
+title: "North Carolina School Monitor"
+output:
+  tufte::tufte_html: default
+  tufte::tufte_handout:
+    citation_package: natbib
+    latex_engine: xelatex
+---
+
+# The team
+
+# Description
+
+Each year NCDPI makes 1.5 million rows of student achievement data available as open data. This goes down to each grade and subject all of NC’s 2,600 public and charter schools. The school monitor enables the public to visualize and compare this data. This encourages parent involvement and choice in their children’s current and potential schools.
+
+# Data sources
+
+* NC DPI School Accountability disaggregated data
+* NC DPI Accountability and Testing Summary Results
+* NC DPI Title I schools
+
+# The work so far
+
+* Inventory publicly available data
+
+# What's next
+
+* Public interface to data
+
+# Wireframe
+
+* Shiny
