@@ -6,7 +6,6 @@ title: Longitudinal(ish) model
 library(dplyr)
 library(RSQLite)
 library(ggplot2)
-library(dplyr)
 ```
 
 ```{r cache=TRUE}
