@@ -1,32 +1,36 @@
 ---
 title: "North Carolina School Monitor"
 output:
-  tufte::tufte_html: default
   tufte::tufte_handout:
     citation_package: natbib
     latex_engine: xelatex
 ---
 
-# The team
-
 # Description
 
 Each year NCDPI makes 1.5 million rows of student achievement data available as open data. This goes down to each grade and subject all of NC’s 2,600 public and charter schools. The school monitor enables the public to visualize and compare this data. This encourages parent involvement and choice in their children’s current and potential schools.
 
+# The team
+
+* Jeremy Freeman
+* David Hopp
+* Brian A. Fannin
+
 # Data sources
 
-* NC DPI School Accountability disaggregated data
-* NC DPI Accountability and Testing Summary Results
-* NC DPI Title I schools
+* [NC DPI School Accountability disaggregated data](http://www.ncpublicschools.org/accountability/reporting/leaperformancearchive/)
+* [NC DPI Accountability and Testing Summary Results](http://www.ncpublicschools.org/accountability/reporting/)
+* [NC DPI Title I Schools](http://www.dpi.state.nc.us/program-monitoring/titleIA/)
+* [North Carolina SAT results](http://www.ncpublicschools.org/accountability/reporting/sat/)
+* [National Center for Education Statistics](http://nces.ed.gov/ccd/elsi/)
+* [American Community Survey](https://www.census.gov/programs-surveys/acs/)
 
 # The work so far
 
-* Inventory publicly available data
+* We are working on completion of an inventory of publicly available data.
+* This will inform construction of inferential statistical models which determine what influences school performance.
 
 # What's next
 
-* Public interface to data
-
-# Wireframe
-
-* Shiny
+* We will construct a publicly available web-based interface to explore the data.
+* The web application will also enable comparisons between and within school districts.
