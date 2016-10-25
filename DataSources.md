@@ -56,6 +56,10 @@ http://www.ncpublicschools.org/accountability/reporting/cohortgradrate
 
 # Ancillary data
 
+## School disciplinary action
+
+http://www.ncpublicschools.org/research/discipline/reports/#consolidated
+
 ## NC DPI Title I schools
 
 http://www.dpi.state.nc.us/program-monitoring/titleIA/
@@ -81,7 +85,6 @@ http://www.ncwise.org/documents/contact_us/NCWISE_Schools.pdf
 
 # Wish list
 
-* School disciplinary action
 * School funding
     * By source
     * Federal
