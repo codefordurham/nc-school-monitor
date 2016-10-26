@@ -1,0 +1,117 @@
+---
+title: EDA Disag
+---
+
+```{r}
+library(dplyr)
+library(RSQLite)
+library(ggplot2)
+```
+
+# Connect to SQLite
+
+First, we'll fetch the data and pop it into a data frame.
+
+```{r cache=TRUE}
+con <- dbConnect(drv = SQLite(), dbname = "./cleaned/disag.db")
+dbListTables(con)
+dfDisag <- dbGetQuery(con, "SELECT * FROM disag")
+```
+
+# Very basic stuff
+
+```{r}
+knitr::kable(head(dfDisag))
+```
+
+```{r }
+names(dfDisag)
+
+lapply(dfDisag, class)
+```
+
+The class of some of the columns suggests that there are some inappropriate data types. `num_glp` for example smells numeric, but we're storing it as character. I'll go ahead and convert a few of those.
+
+```{r cache=TRUE}
+dfDisag <- dfDisag %>% 
+  mutate(pct_glp = as.numeric(pct_glp)
+         , num_glp = as.numeric(num_glp))
+```
+
+## Some denormalization
+
+This will likely need to get moved out of EDA and into an earlier data processing step. I'm going to try and have a look at some of the denormalized data. I think School is the only such table. I'm not 100% clear on whether `grade_span` ought to be a property of the school or the result record.
+
+```{r}
+dfSchool <- dfDisag %>% 
+  select(SchoolCode = school_code, SchoolName = name) %>% 
+  unique()
+```
+
+```{r}
+table(dfDisag$grade_span)
+
+dfSchoolGradeSpan <- dfDisag %>% 
+  select(SchoolCode = school_code, SchoolName = name, GradeSpan = grade_span) %>% 
+  unique()
+
+nrow(dfSchool) == nrow(dfSchoolGradeSpan)
+
+dfMultiGradeSpan <- dfSchoolGradeSpan %>% 
+  group_by(SchoolCode) %>% 
+  summarise(NumRec = n()) %>% 
+  filter(NumRec > 1)
+```
+
+OK, so there's a bunch of schools that have multiple grade spans.
+
+## Category tables
+
+The hierarchy of the categories isn't 100% clear to me. We'll have a look at some tables
+
+```{r}
+table(dfDisag$subject)
+table(dfDisag$grade)
+table(dfDisag$type)
+table(dfDisag$subgroup)
+```
+
+### subgroup
+
+* _AIG_ = *A*cademically and _I_ ntellecutally _G_ ifted
+* _AMIN_ = _AM_erican _IN_dian
+* _EDS_ = ???
+* _LEP_ = ?? _E_ducation _P_lan ??
+* _MIG_ = ???
+* _SWD_ = ?? _S_tudents With Disability ??
+
+## Basic numeric diagnostics
+
+```{r}
+hist(dfDisag$avg_score)
+```
+
+```{r}
+hist(dfDisag$pct_glp)
+```
+
+```{r}
+plt <- ggplot(dfDisag, aes(pct_glp, fill = school_year)) + geom_density(alpha = 0.6)
+plt
+```
+
+```{r}
+dfByYear <- dfDisag %>% 
+  group_by(school_year) %>% 
+  summarise(MedianGLP = median(pct_glp, na.rm = TRUE)
+            , MeanGLP = mean(pct_glp, na.rm = TRUE))
+```
+
+We've got `num_tested` and `num_glp`. That suggests a poisson model where num_tested is an offset term. I'm still struggling with the observations by school. 
+
+# Flotsam
+
+http://www.educationnewyork.com/files/The%20importance%20of%20disaggregating_0.pdf 
+http://edglossary.org/disaggregated-data/
+
+What is this: http://www.ncpublicschools.org/accountability/reporting/datasets ?

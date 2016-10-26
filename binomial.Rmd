@@ -1,0 +1,29 @@
+---
+---
+
+```{r}
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+load("disag.rda")
+```
+
+```{r}
+pltAIG <- ggplot(dfEOG, aes(PctAIG, pct_glp)) + geom_point()
+pltAIG
+```
+
+```{r}
+fitEOG_AIG <- glm(data = dfEOG
+                     , pct_glp ~ 1 + PctAIG
+                     , family = binomial)
+summary(fitEOG_AIG)
+
+dfEOG$PredictAIG <- predict(fitEOG_AIG, type = "response")
+
+pltAIG <- pltAIG + geom_line(aes(PctAIG, PredictBinom), color = "red")
+pltAIG
+```
+
