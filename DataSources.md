@@ -4,6 +4,14 @@ title: Data Sources
 
 # School performance
 
+## US Dept. of Education EDFacts 
+Includes data on  
+- Proficiency
+- Participation
+- Cohort Graduation Rate
+
+http://www2.ed.gov/about/inits/ed/edfacts/data-files/index.html
+
 ## NC DPI Accountability and Testing Summary Results
 
 These are the school "grades". Description is here: http://www.ncpublicschools.org/docs/accountability/reporting/spgbckgrndpack15.pdf. 
