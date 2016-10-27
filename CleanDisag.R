@@ -60,5 +60,6 @@ save(file = "disag.rda"
      , dfSchoolYear
      , dfPctAIG
      , dfPctGender
-     , dfSchoolComposition)
+     , dfSchoolComposition
+     , dfEOG)
      # , dfDisagWide)

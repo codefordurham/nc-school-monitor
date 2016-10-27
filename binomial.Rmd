@@ -23,7 +23,30 @@ summary(fitEOG_AIG)
 
 dfEOG$PredictAIG <- predict(fitEOG_AIG, type = "response")
 
-pltAIG <- pltAIG + geom_line(aes(PctAIG, PredictBinom), color = "red")
+pltAIG <- pltAIG + geom_line(aes(PctAIG, PredictAIG), color = "red")
 pltAIG
+```
+
+```{r}
+fitEOG_Gender <- glm(data = dfEOG
+                     , pct_glp ~ 1 + PctFemale
+                     , family = binomial)
+
+summary(fitEOG_Gender)
+
+dfEOG$PredictGender <- predict(fitEOG_Gender, type = "response")
+```
+
+```{r}
+pltGender <- ggplot(dfEOG, aes(PctFemale, pct_glp)) + geom_point()
+pltGender <- pltGender + geom_line(aes(PctFemale, PredictGender), color = "red")
+pltGender
+
+pltGender + scale_x_continuous(limits = c(0.4, 0.6))
+```
+
+```{r}
+pltAIG_Gender <- ggplot(dfEOG, aes(PctAIG, PctFemale)) + geom_point()
+pltAIG_Gender
 ```
 

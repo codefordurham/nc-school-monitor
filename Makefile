@@ -90,3 +90,6 @@ clean_disag:
 remove_disag_files:
 	cd downloaded-data/ncdpi/disag/; \
 	rm *.txt *.doc
+
+disag.rda:CleanDisag.R
+	Rscript CleanDisag.R
