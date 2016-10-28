@@ -7,8 +7,32 @@ library(ggplot2)
 ```
 
 ```{r}
+InverseLogit <- function(x){
+  exp(x) / (exp(x) + 1)
+}
+```
+
+
+```{r cache=TRUE}
 load("disag.rda")
 ```
+
+## No coefficients
+
+```{r}
+fitEOG_Intercept <- glm(data = dfEOG
+                        , pct_glp ~ 1
+                        , family = binomial)
+summary(fitEOG_Intercept)
+
+InverseLogit(coef(fitEOG_Intercept)[[1]])
+```
+
+## Univariate models
+
+### AIG
+
+We start by visualizing the relationship between AIG percent and GLP. We will note that there is a positive relationship between the two.
 
 ```{r}
 pltAIG <- ggplot(dfEOG, aes(PctAIG, pct_glp)) + geom_point()
@@ -23,9 +47,12 @@ summary(fitEOG_AIG)
 
 dfEOG$PredictAIG <- predict(fitEOG_AIG, type = "response")
 
+pltAIG <- ggplot(dfEOG, aes(PctAIG, pct_glp)) + geom_point()
 pltAIG <- pltAIG + geom_line(aes(PctAIG, PredictAIG), color = "red")
 pltAIG
 ```
+
+### Gender
 
 ```{r}
 fitEOG_Gender <- glm(data = dfEOG
@@ -35,6 +62,14 @@ fitEOG_Gender <- glm(data = dfEOG
 summary(fitEOG_Gender)
 
 dfEOG$PredictGender <- predict(fitEOG_Gender, type = "response")
+
+InverseLogit(.01)
+
+gonzo <- data.frame(PctFemale = seq(.01, .99, by = .01))
+gonzo$Predict <- predict(fitEOG_Gender, newdata = gonzo)
+gonzo$PredictResponse <- predict(fitEOG_Gender, newdata = gonzo, type = "response")
+
+InverseLogit(coef(fitEOG_Gender)[[1]] + .01 * coef(fitEOG_Gender)[[2]])
 ```
 
 ```{r}
@@ -45,8 +80,60 @@ pltGender
 pltGender + scale_x_continuous(limits = c(0.4, 0.6))
 ```
 
+### Grade
+
 ```{r}
-pltAIG_Gender <- ggplot(dfEOG, aes(PctAIG, PctFemale)) + geom_point()
+fitEOG_Grade <- glm(data = dfEOG
+                    , pct_glp ~ 1 + gradeFactor
+                    , family = binomial)
+
+summary(fitEOG_Grade)
+
+pltGrade <- ggplot(dfEOG, aes(gradeFactor, pct_glp)) + geom_boxplot()
+pltGrade
+```
+
+## Bivariate models
+
+### AIG and Gender
+
+As we would expect, inclusion of both variables improves the model. Note that the magnitude of the AIG parameter is higher than % female and the variance around the estimate is lower.
+
+```{r}
+fitEOG_AIG_Gender <- glm(data = dfEOG
+                         , pct_glp ~ 1 + PctAIG + PctFemale
+                         , family = binomial)
+
+summary(fitEOG_AIG_Gender)
+```
+
+We wonder if there is a correlation between AIG and gender.
+
+```{r}
+fitAIG_Gender <- glm(data = dfEOG
+                     , PctAIG ~ 1 + PctFemale
+                     , family = binomial)
+summary(fitAIG_Gender)
+
+pltAIG_Gender <- ggplot(dfEOG, aes(PctAIG, PctFemale)) + geom_point(alpha = 0.02)
 pltAIG_Gender
 ```
 
+```{r}
+fitEOG_AIG_Gender <- glm(data = dfEOG
+                         , pct_glp ~ 1 + PctAIG + PctFemale
+                         , family = binomial)
+
+```
+
+
+
+```{r}
+fitEOG_AIG_GenderInteract <- glm(data = dfEOG
+                                 , pct_glp ~ 1 + PctAIG:PctFemale
+                                 , family = binomial)
+
+summary(fitEOG_AIG_GenderInteract)
+```
+
+### Grade and gender
