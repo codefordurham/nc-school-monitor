@@ -21,3 +21,5 @@ _build
 downloaded-data/*
 cleaned/*
 env/*
+.Rproj.user
+*.rda
