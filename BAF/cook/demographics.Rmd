@@ -1,0 +1,61 @@
+---
+title: "demographics"
+params: 
+  inputDir: "cooked/"
+  thisDir:  "cook/"
+  outputDir: "cooked/"
+  fileStem: "demographics"
+  inputFiles: 
+    - disag
+---
+
+```{r KnitrOpts, echo=FALSE}
+knitr::opts_knit$set(root.dir = normalizePath('../'))
+knitr::opts_chunk$set(echo=TRUE, message=TRUE, warning=TRUE, error=TRUE)
+```
+
+```{r Load, results='hide'}
+loadedObjects <- represtools::LoadObjects(params)
+```
+
+```{r}
+library(dplyr)
+library(tidyr)
+```
+
+
+```{r}
+dfPctAIG <- dfDisag %>% 
+  filter(subgroup %in% c('AIG', 'ALL')
+         , subject == 'ALL'
+         , grade == 'ALL'
+         , type == 'ALL') %>% 
+  select(school_code, school_year, subgroup, num_tested) %>% 
+  spread(subgroup, num_tested, fill = 0) %>% 
+  mutate(PctAIG = AIG / ALL)
+
+dfPctGender <- dfDisag %>% 
+  filter(subgroup %in% c('FEM', 'MALE')
+         , subject == 'ALL'
+         , grade == 'ALL'
+         , type == 'ALL') %>% 
+  select(school_code, school_year, subgroup, num_tested) %>% 
+  spread(subgroup, num_tested, fill = 0) %>% 
+  mutate(Total = MALE + FEM
+         , PctMale = MALE / Total
+         , PctFemale = FEM / Total)
+
+dfSchoolComposition <- dfSchoolYear %>% 
+  left_join(dfPctAIG) %>% 
+  left_join(dfPctGender)
+```
+
+```{r ListObjects}
+lstObjects <- represtools::ListObjects(pattern = c("df", "plt"))
+represtools::DescribeObjects(represtools::NamesToObjects(lstObjects))
+```
+
+```{r Save}
+save(file = represtools::OutputFile(params)
+     , list = lstObjects)
+```

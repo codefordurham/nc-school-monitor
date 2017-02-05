@@ -1,0 +1,43 @@
+---
+title: "EOG"
+params: 
+  inputDir: "cooked/"
+  thisDir:  "cook/"
+  outputDir: "cooked/"
+  fileStem: "EOG"
+  inputFiles: 
+    - disag
+---
+
+```{r KnitrOpts, echo=FALSE}
+knitr::opts_knit$set(root.dir = normalizePath('../'))
+knitr::opts_chunk$set(echo=TRUE, message=TRUE, warning=TRUE, error=TRUE)
+```
+
+```{r Load, results='hide'}
+loadedObjects <- represtools::LoadObjects(params)
+```
+
+```{r}
+library(dplyr)
+library(tidyr)
+```
+
+```{r}
+dfEOG <- dfDisag %>% 
+  filter(subject == "EOG"
+         , subgroup == "ALL"
+         , !is.na(pct_glp)) %>% 
+  select(school_code, school_year, type, grade, gradeFactor, SchoolYearInt, num_tested, num_glp, pct_glp) %>% 
+  left_join(dfSchoolComposition)
+```
+
+```{r ListObjects}
+lstObjects <- represtools::ListObjects(pattern = c("df", "plt"))
+represtools::DescribeObjects(represtools::NamesToObjects(lstObjects))
+```
+
+```{r Save}
+save(file = represtools::OutputFile(params)
+     , list = lstObjects)
+```

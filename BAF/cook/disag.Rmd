@@ -1,0 +1,43 @@
+---
+title: "disag"
+params: 
+  inputDir: "gathered/"
+  thisDir:  "cook/"
+  outputDir: "cooked/"
+  fileStem: "disag"
+  inputFiles: 
+    - disag
+---
+
+```{r KnitrOpts, echo=FALSE}
+knitr::opts_knit$set(root.dir = normalizePath('../'))
+knitr::opts_chunk$set(echo=TRUE, message=TRUE, warning=TRUE, error=TRUE)
+```
+
+```{r Load, results='hide'}
+loadedObjects <- represtools::LoadObjects(params)
+```
+
+```{r}
+library(dplyr)
+```
+
+```{r}
+dfDisag <- dfDisag %>% 
+  mutate(num_glp = as.numeric(num_glp)
+         , pct_glp = num_glp / num_tested
+         , SchoolYearInt = as.integer(substr(school_year, 1, 4))
+         , gradeFactor = factor(grade, levels = c('03', '04' ,'05', '06', '07', '08'
+                                                  , 'EOC', 'GS', 'ALL')
+                                , ordered = TRUE))
+```
+
+```{r ListObjects}
+lstObjects <- represtools::ListObjects(pattern = c("df", "plt"))
+represtools::DescribeObjects(represtools::NamesToObjects(lstObjects))
+```
+
+```{r Save}
+save(file = represtools::OutputFile(params)
+     , list = lstObjects)
+```

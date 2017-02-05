@@ -1,0 +1,50 @@
+---
+title: "Schools"
+params: 
+  inputDir: "cooked/"
+  thisDir:  "cook/"
+  outputDir: "cooked/"
+  fileStem: "school"
+  inputFiles: 
+    - "disag"
+---
+
+```{r KnitrOpts, echo=FALSE}
+knitr::opts_knit$set(root.dir = normalizePath('../'))
+knitr::opts_chunk$set(echo=TRUE, message=TRUE, warning=TRUE, error=TRUE)
+```
+
+```{r Load, results='hide'}
+loadedObjects <- represtools::LoadObjects(params)
+```
+
+```{r}
+library(tidyr)
+library(dplyr)
+```
+
+```{r}
+dfSchool <- dfDisag %>% 
+  select(school_code, name) %>% 
+  group_by(school_code) %>% 
+  slice(1) %>% 
+  unique()
+
+if (length(unique(dfSchool$school_code)) != nrow(dfSchool)) {
+  warning("Unique school codes don't equal records in school table.")
+}
+
+dfSchoolYear <- dfDisag %>% 
+  select(school_code, school_year) %>% 
+  unique()
+```
+
+```{r ListObjects}
+lstObjects <- represtools::ListObjects(pattern = c("df", "plt"))
+represtools::DescribeObjects(represtools::NamesToObjects(lstObjects))
+```
+
+```{r Save}
+save(file = represtools::OutputFile(params)
+     , list = lstObjects)
+```

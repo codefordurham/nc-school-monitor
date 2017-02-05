@@ -1,0 +1,146 @@
+---
+title: "PerformanceChange"
+params: 
+  inputDir: "cooked/"
+  thisDir:  "analyze/"
+  outputDir: "analyzed/"
+  fileStem: "PerformanceChange"
+  inputFiles: 
+    - EOG
+output: pdf_document
+---
+
+```{r KnitrOpts, echo=FALSE}
+knitr::opts_knit$set(root.dir = normalizePath('../'))
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=TRUE)
+```
+
+```{r Load, results='hide'}
+loadedObjects <- represtools::LoadObjects(params)
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+```
+
+```{r}
+dfYearToYear <- dfDisag %>% 
+  select(school_code, grade_span, subject, gradeFactor, type, subgroup, SchoolYearInt, num_tested, pct_glp) %>% 
+  group_by(school_code, grade_span, subject, gradeFactor, type, subgroup) %>% 
+  arrange(-num_tested, -pct_glp) %>% 
+  mutate(CurrentGLP = pct_glp) %>% 
+  filter(!is.na(CurrentGLP)) %>% 
+  mutate(PriorGLP = dplyr::lag(pct_glp)
+         , PctGlpChange = pct_glp / PriorGLP
+         , PctGlpChangeUnscaled = CurrentGLP - PriorGLP) %>% 
+  ungroup() %>% 
+  filter(!is.na(PriorGLP)
+         , !is.na(PctGlpChange))
+
+summary(dfYearToYear$PctGlpChange)
+summary(dfYearToYear$PctGlpChangeUnscaled)
+```
+
+# Why are some of the unscaled changes so high?
+
+```{r}
+dfYearToYear <- dfYearToYear %>% 
+  mutate(PctGlpChangeAbsUnscaled = abs(PctGlpChangeUnscaled))
+
+quantile(dfYearToYear$PctGlpChangeAbsUnscaled, probs = c(.001, .01, .02, .03))
+quantile(dfYearToYear$PctGlpChangeAbsUnscaled, probs = c(.999, .99, .98, .97))
+
+# What % are gte 30?
+Fn_PctGlpChangeAbsUnscaled <- ecdf(dfYearToYear$PctGlpChangeAbsUnscaled)
+1 - Fn_PctGlpChangeAbsUnscaled(0.3)
+quantile(Fn_PctGlpChangeAbsUnscaled)
+```
+
+```{r}
+plt <- ggplot(dfYearToYear, aes(num_tested, PctGlpChangeAbsUnscaled)) + stat_bin_hex()
+plt
+
+dfPlot <- dfYearToYear %>% 
+  filter(num_tested < 100)
+
+plt <- ggplot(dfPlot, aes(num_tested, PctGlpChangeAbsUnscaled)) + stat_bin_hex()
+plt
+```
+
+```{r }
+num_to_eliminate <- as.integer(nrow(dfYearToYear) * .05)
+
+dfYearToYear
+
+small_threshold <- 20
+dfYearToYearSmallSize <- dfYearToYear %>% 
+  filter(num_tested <= small_threshold)
+
+dfYearToYear <- dfYearToYear %>% 
+  filter(num_tested > small_threshold)
+```
+
+# Work with unscaled changes lte 25%
+
+```{r}
+dfYearToYearTrunc <- dfYearToYear %>% 
+  filter(PctGlpChangeAbsUnscaled < 0.3)
+
+1 - nrow(dfYearToYearTrunc) / nrow(dfYearToYear)
+```
+
+```{r}
+pltOverall <- ggplot(dfYearToYearTrunc, aes(PctGlpChangeUnscaled)) + geom_density(fill = "blue")
+pltOverall
+
+pltOverall <- ggplot(dfYearToYearTrunc, aes(PctGlpChangeUnscaled)) + geom_histogram()
+pltOverall
+```
+
+```{r}
+pltByYear <- ggplot(dfYearToYearTrunc, aes(PctGlpChangeUnscaled
+                                           , fill = as.factor(SchoolYearInt))) + geom_histogram()
+pltByYear + geom_vline(xintercept = 0.0, color = "black") + facet_grid(SchoolYearInt ~ .)
+```
+
+```{r}
+pltBySubject <- ggplot(dfYearToYearTrunc, aes(PctGlpChangeUnscaled
+                                           , fill = subject)) + geom_histogram()
+pltBySubject + geom_vline(xintercept = 0.0, color = "black")
+```
+
+```{r}
+pltByType <- ggplot(dfYearToYearTrunc, aes(PctGlpChangeUnscaled
+                                           , fill = type)) + geom_histogram()
+pltByType + geom_vline(xintercept = 0.0, color = "black")
+```
+
+```{r}
+pltBySubGroup <- ggplot(dfYearToYearTrunc, aes(PctGlpChangeUnscaled
+                                           , fill = subgroup)) + geom_histogram()
+pltBySubGroup + geom_vline(xintercept = 0.0, color = "black")
+
+dfGender <- dfYearToYearTrunc %>% 
+  filter(subgroup %in% c("FEM", "MALE"))
+
+pltGender <- ggplot(dfGender, aes(PctGlpChangeUnscaled
+                                           , fill = subgroup)) + geom_histogram()
+pltGender + geom_vline(xintercept = 0.0, color = "black")
+
+dfGender %>% 
+  group_by(subgroup) %>% 
+  summarise(TotalTested = sum(num_tested))
+```
+
+
+```{r ListObjects}
+lstObjects <- represtools::ListObjects()
+represtools::DescribeObjects(lstObjects)
+```
+
+```{r Save}
+save(file = represtools::OutputFile(params)
+     , list = lstObjects)
+```

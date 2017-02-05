@@ -1,0 +1,32 @@
+---
+title: "Disag data"
+params: 
+  inputDir: "gather/"
+  thisDir:  "gather/"
+  outputDir: "gathered/"
+  fileStem: "disag"
+---
+
+```{r KnitrOpts, echo=FALSE}
+knitr::opts_knit$set(root.dir = normalizePath('../'))
+knitr::opts_chunk$set(echo=TRUE, message=TRUE, warning=TRUE, error=TRUE)
+```
+
+```{r}
+library(dplyr)
+library(RSQLite)
+library(tidyr)
+
+con <- dbConnect(drv = SQLite(), dbname = "../cleaned/disag.db")
+dfDisag <- dbGetQuery(con, "SELECT * FROM disag")
+```
+
+```{r ListObjects}
+lstObjects <- represtools::ListObjects("df")
+represtools::DescribeObjects(represtools::NamesToObjects(lstObjects))
+```
+
+```{r Save}
+save(file = represtools::OutputFile(params)
+     , list = lstObjects)
+```
