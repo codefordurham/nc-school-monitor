@@ -22,3 +22,4 @@ downloaded-data/*
 cleaned/*
 env/*
 .Rproj.user
+.venv/*
